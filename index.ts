@@ -1,4 +1,4 @@
-import RSL, { Token, defaultLong, defaultWrapper, defaultUnique } from "./src/rale"
+import RALE, { Token, defaultLong, defaultWrapper, defaultUnique } from "./src/rale"
 
 const defaultParams = {
     long: defaultLong,
@@ -6,5 +6,5 @@ const defaultParams = {
     unique: defaultUnique,
 }
 
-export default RSL;
-export { RSL, defaultParams, Token };
+export default RALE;
+export { RALE, defaultParams, Token };
