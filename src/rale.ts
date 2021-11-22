@@ -291,7 +291,7 @@ export default class RALE {
 
                         parsed[i+2] = end.slice(1);
 
-                        const cnt = this.parseWrappers(content, coloumn, line);
+                        const cnt = this.parseWrappers(content, coloumn+1, line);
 
                         tokens.push({
                             begin: {
@@ -299,7 +299,7 @@ export default class RALE {
                                 line: line,
                             },
                             end: {
-                                coloumn: cnt.coloumn+2,
+                                coloumn: cnt.coloumn+1,
                                 line: cnt.line,
                             },
                             "type": "wrapper",
@@ -307,7 +307,7 @@ export default class RALE {
                             "content": cnt.tokens,
                         })
 
-                        coloumn = cnt.coloumn+2;
+                        coloumn = cnt.coloumn+1;
                         line = cnt.line;
 
                     } else {
