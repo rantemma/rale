@@ -27,7 +27,9 @@ interface Token {
     }
 
     name: string,
-    content: string | Token[],
+
+    content?: string,
+    wrapperContent?: Token[],
 
     type: "wrapper" | "long" | "unique",
 
@@ -35,8 +37,8 @@ interface Token {
 
 const defaultWrapper: Wrapper[] = [
 
-    {begin: "{", end: "}", name: "braces"},
-    {begin: "[", end: "]", name: "hook"},
+    {begin: "{", end: "}", name: "curly_bracket"},
+    {begin: "[", end: "]", name: "bracket"},
     {begin: "(", end: ")", name: "parenthesis"},
 
 ]
@@ -53,16 +55,16 @@ const defaultUnique: Unique[] = [
     {name: "dot", character: "."},
     {name: "semicolon", character: ";"},
 
-    {name: "hyphen", character: "-"},
+    {name: "dash", character: "-"},
     {name: "plus", character: "+"},
     {name: "equal", character: "="},
-    {name: "asterisk", character: "*"},
+    {name: "star", character: "*"},
     {name: "slash", character:"/"},
     {name: "anti_slash", character: "\\"},
 
-    {name: "quotations_marks", character: '"'},
-    {name: "apostrophe", character: "'"},
-    {name: "hapo", character: "`"},
+    {name: "double_quote", character: '"'},
+    {name: "single_quote", character: "'"},
+    {name: "backtick", character: "`"},
 
 ]
 
@@ -302,9 +304,9 @@ export default class RALE {
                                 coloumn: cnt.coloumn+1,
                                 line: cnt.line,
                             },
-                            "type": "wrapper",
-                            "name": match.name,
-                            "content": cnt.tokens,
+                            type: "wrapper",
+                            name: match.name,
+                            wrapperContent: cnt.tokens,
                         })
 
                         coloumn = cnt.coloumn+1;
