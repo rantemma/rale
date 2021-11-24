@@ -1,8 +1,8 @@
-**RALE or Rantemma Advanced Lexing Evaluation**
+**Rale or Rantemma Advanced Lexing Evaluation**
 
 Is the official lexer of the Rantemma System Langage (aka RSL).
 
-No need to create a lexer, with RALE it's easy to parse any string into Token as you want or with default lexer parameters.
+No need to create a lexer, with Rale it's easy to parse any string into Token as you want or with default lexer parameters.
 
 ***
 
@@ -46,7 +46,7 @@ const wrappers: Wrapper[] = {
 With tokens made before, we create the Lexer.
 
 ```js
-const lexer = new RALE(longs, uniques, wrappers, true); // the last value is for tokenizing unknown tokens.
+const lexer = new Rale(longs, uniques, wrappers, true); // the last value is for tokenizing unknown tokens.
 ```
 
 ## Use your lexer
