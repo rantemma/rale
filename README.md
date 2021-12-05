@@ -1,6 +1,6 @@
 **Rale or Rantemma Advanced Lexing Evaluation**
 
-Is the official lexer of the Rantemma System Langage (aka RSL).
+Is the official lexer of the Rantemma Language System (aka RLS).
 
 No need to create a lexer, with Rale it's easy to parse any string into Token as you want or with default lexer parameters.
 
@@ -26,7 +26,7 @@ The long token is a token formed by RegExp.
 *The regex match is executed character by character*
 
 ```ts
-const uniques: Unique[] = {
+const longs: Longs[] = {
     {name: "string", regex: /[a-z0-9]/i}
 }
 ```
@@ -52,7 +52,7 @@ const lexer = new Rale(longs, uniques, wrappers, true); // the last value is for
 ## Use your lexer
 
 ```js
-const query = "hey {test}";
+const query = "hey { test }";
 lexer.parse(query);
 ```
 
@@ -62,10 +62,12 @@ That gave you :
 [
   {
     "begin": {
+      "index": 0,
       "coloumn": 0,
       "line": 0
     },
     "end": {
+      "index": 3,
       "coloumn": 3,
       "line": 0
     },
@@ -75,10 +77,12 @@ That gave you :
   },
   {
     "begin": {
+      "index": 3,
       "coloumn": 3,
       "line": 0
     },
     "end": {
+      "index": 4,
       "coloumn": 4,
       "line": 0
     },
@@ -88,28 +92,62 @@ That gave you :
   },
   {
     "begin": {
+      "index": 4,
       "coloumn": 4,
       "line": 0
     },
     "end": {
-      "coloumn": 10,
+      "index": 12,
+      "coloumn": 12,
       "line": 0
     },
     "type": "wrapper",
-    "name": "braces",
-    "content": [
+    "name": "curly_bracket",
+    "wrapperContent": [
       {
         "begin": {
+          "index": 5,
           "coloumn": 5,
           "line": 0
         },
         "end": {
-          "coloumn": 9,
+          "index": 6,
+          "coloumn": 6,
+          "line": 0
+        },
+        "type": "long",
+        "name": "space",
+        "content": " "
+      },
+      {
+        "begin": {
+          "index": 6,
+          "coloumn": 6,
+          "line": 0
+        },
+        "end": {
+          "index": 10,
+          "coloumn": 10,
           "line": 0
         },
         "type": "long",
         "name": "string",
         "content": "test"
+      },
+      {
+        "begin": {
+          "index": 10,
+          "coloumn": 10,
+          "line": 0
+        },
+        "end": {
+          "index": 11,
+          "coloumn": 11,
+          "line": 0
+        },
+        "type": "long",
+        "name": "space",
+        "content": " "
       }
     ]
   }

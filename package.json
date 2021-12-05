@@ -3,11 +3,10 @@
     "parenthesis": "^3.1.8"
   },
   "devDependencies": {
-    "@types/node": "^16.11.9",
-    "typescript": "^4.5.2"
+    "@types/node": "^16.11.9"
   },
   "name": "rale",
-  "version": "0.0.3",
+  "version": "0.0.9",
   "description": "Rantemma Advanced Lexing Evaluation",
   "main": "index.js",
   "scripts": {},
@@ -16,11 +15,11 @@
     "url": "git+https://github.com/Rantemma/rale.git"
   },
   "keywords": [
-    "Rantemma",
-    "Lexer",
-    "Lexing",
-    "Evaluation",
-    "Parsing"
+    "rantemma",
+    "lexer",
+    "lexing",
+    "evaluation",
+    "parsing"
   ],
   "author": "YiraSan",
   "license": "MIT",

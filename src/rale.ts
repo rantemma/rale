@@ -17,11 +17,13 @@ interface Long {
 interface Token {
 
     begin: {
+        index: number,
         coloumn: number,
         line: number,
     },
 
     end: {
+        index: number,
         coloumn: number,
         line: number,
     }
@@ -40,20 +42,22 @@ const defaultWrapper: Wrapper[] = [
     {begin: "{", end: "}", name: "curly_bracket"},
     {begin: "[", end: "]", name: "bracket"},
     {begin: "(", end: ")", name: "parenthesis"},
+    {begin: "<", end: ">", name: "angle_bracket"},
 
 ]
 
 const defaultLong: Long[] = [
 
-    {regex: /[a-z0-9]/i, name: "string"},
-    {regex: /[0-9]]/, name: "number"},
-
+    {regex: /[0-9]/, name: "number"},
+    {regex: /[a-z0-9_]/i, name: "string"},
+    
 ]
 
 const defaultUnique: Unique[] = [
 
     {name: "dot", character: "."},
     {name: "semicolon", character: ";"},
+    {name: "colon", character: ":"},
 
     {name: "dash", character: "-"},
     {name: "plus", character: "+"},
@@ -61,6 +65,9 @@ const defaultUnique: Unique[] = [
     {name: "star", character: "*"},
     {name: "slash", character:"/"},
     {name: "anti_slash", character: "\\"},
+
+    {name: "question_mark", character: "?"},
+    {name: "exclamation_mark", character: "!"},
 
     {name: "double_quote", character: '"'},
     {name: "single_quote", character: "'"},
@@ -76,6 +83,7 @@ interface RT {
     tokens: Token[],
     coloumn: number,
     line: number,
+    indexof: number,
 }
 
 export default class RALE {
@@ -107,12 +115,17 @@ export default class RALE {
 
     }
 
-    public tokenizeWords (str: string, coloumn?: number, line?: number): RT {
+    public tokenizeWords (str: string, coloumn?: number, line?: number, indexOf?: number): RT {
 
+        if (!indexOf) indexOf = 0;
         if (!coloumn) coloumn = 0;
         if (!line) line = 0;
 
         let tokens: Token[] = [];
+
+        while (str.includes("\r")) {
+            str = str.replace("\n", "");
+        }
 
         const characters = str.split("");
 
@@ -124,6 +137,7 @@ export default class RALE {
 
                 if (current === "\n") {
                     line++;
+                    coloumn = 0;
                     return;
                 }
 
@@ -139,10 +153,12 @@ export default class RALE {
 
                     tokens.push({
                         begin: {
+                            index: indexOf+i,
                             coloumn: coloumn,
                             line: line,
                         },
                         end: {
+                            index: indexOf+i+pos,
                             coloumn: coloumn+pos,
                             line: line,
                         },
@@ -163,10 +179,12 @@ export default class RALE {
     
                         tokens.push({
                             begin: {
+                                index: indexOf+i,
                                 coloumn: coloumn,
                                 line: line,
                             },
                             end: {
+                                index: indexOf+i+1,
                                 coloumn: coloumn+1,
                                 line: line,
                             },
@@ -200,10 +218,12 @@ export default class RALE {
 
                         tokens.push({
                             begin: {
+                                index: indexOf+i,
                                 coloumn: coloumn,
                                 line: line,
                             },
                             end: {
+                                index: indexOf+i+pos,
                                 coloumn: coloumn+pos,
                                 line: line,
                             },
@@ -224,10 +244,12 @@ export default class RALE {
                 if (this.tokenizeUnknownCharacters) {
                     tokens.push({
                         begin: {
+                            index: indexOf+i,
                             coloumn: coloumn,
                             line: line,
                         },
                         end: {
+                            index: indexOf+i+1,
                             coloumn: coloumn+1,
                             line: line,
                         },
@@ -246,12 +268,14 @@ export default class RALE {
             tokens: tokens,
             coloumn: coloumn,
             line: line,
+            indexof: indexOf+characters.length,
         };
 
     }
 
-    private parseWrappers (parsed: parenthesis.ArrayTree, coloumn?: number, line?: number): RT {
+    private parseWrappers (parsed: parenthesis.ArrayTree, coloumn?: number, line?: number, indexOf?: number): RT {
 
+        if (!indexOf) indexOf = 0;
         if (!coloumn) coloumn = 0;
         if (!line) line = 0;
 
@@ -268,20 +292,18 @@ export default class RALE {
                 const match = this.matchWrapper(now[now.length-1]);
 
                 if (match !== false) {
+
                     var start = parsed[i];
+                    
                     if (typeof start === "string") {
                         start = start.slice(0, parsed[i].length-1);
-                        const cnt = this.tokenizeWords(start, coloumn, line);
+                        const cnt = this.tokenizeWords(start, coloumn, line, indexOf);
                         coloumn = cnt.coloumn;
                         line = cnt.line;
+                        indexOf = cnt.indexof;
                         tokens.push(...cnt.tokens);
                     }
-                } else {
-
-                }
-
-                if (match !== false) {
-
+               
                     const content = parsed[i+1];
                     const end = parsed[i+2];
 
@@ -293,14 +315,16 @@ export default class RALE {
 
                         parsed[i+2] = end.slice(1);
 
-                        const cnt = this.parseWrappers(content, coloumn+1, line);
+                        const cnt = this.parseWrappers(content, coloumn+1, line, indexOf+1);
 
                         tokens.push({
                             begin: {
+                                index: indexOf,
                                 coloumn: coloumn,
                                 line: line,
                             },
                             end: {
+                                index: cnt.indexof+1,
                                 coloumn: cnt.coloumn+1,
                                 line: cnt.line,
                             },
@@ -309,6 +333,7 @@ export default class RALE {
                             wrapperContent: cnt.tokens,
                         })
 
+                        indexOf = cnt.indexof+1;
                         coloumn = cnt.coloumn+1;
                         line = cnt.line;
 
@@ -319,9 +344,10 @@ export default class RALE {
                     i+=1;
 
                 } else {
-                    const cnt = this.tokenizeWords(now, coloumn, line);
+                    const cnt = this.tokenizeWords(now, coloumn, line, indexOf);
                     coloumn = cnt.coloumn;
                     line = cnt.line;
+                    indexOf = cnt.indexof;
                     tokens.push(...cnt.tokens);
                 }
 
@@ -335,6 +361,7 @@ export default class RALE {
             tokens: tokens,
             coloumn: coloumn,
             line: line,
+            indexof: indexOf,
         };
 
     }
